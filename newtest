@@ -1,0 +1,64 @@
+#!/bin/bash
+set -e
+ASGN=$1
+source PATHS
+cd $DIR357
+cd $ASGN
+make clean
+make
+NUM=1
+FILE="in$NUM"
+while [ -e "$FILE" ]; do
+   NUM=$((NUM+1))
+   FILE="in$NUM"
+done
+
+echo "Command line args?"
+read ARGS
+
+echo "Writing to $FILE! Type quit to finish"
+echo $ARGS > $FILE
+
+while read line && [ "$line" != "quit" ]; do
+   echo $line >> $FILE
+done
+echo "Running your code..."
+set +e
+tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
+
+#Inst
+DIR="/home/kmammen/357/$ASGN"
+if [ ! -d $DIR ]; then
+   echo "$ASGN not found!"
+   exit
+fi
+cd $DIR
+NUM=0
+FILES=( )
+for f in *; do
+   if [ -f "$f" ] && [ -x "$f" ]; then
+      FILES[$NUM]=$f
+      NUM=$((NUM+1))
+   fi
+done
+INST=0
+if [[ $NUM == 0 ]]; then
+   echo "No executable found!"
+   exit
+fi
+if [[ $NUM > 1 ]]; then
+   echo "Multiple executables found!"
+   for (( i = 0; i < $NUM; i++ )); do
+      echo "$i: ${FILES[$i]}"
+   done
+   echo "Which one? "
+   read INST
+fi
+cd $HOME/cpe357/$ASGN
+echo "Running instructor code..."
+tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
+echo "Diffing output..."
+diff $FILE.out $FILE.myout
+diff $FILE.err $FILE.myerr
+echo "Done!"
+

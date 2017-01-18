@@ -1,0 +1,16 @@
+#!/bin/bash
+ASGN=$1
+source PATHS
+DIR="/home/kmammen-grader/evaluations/W17/357/$ASGN"
+cd $DIR357
+if [ ! -d $ASGN ]; then
+   echo "Invalid assignment: $ASGN"
+   exit 2
+fi
+cd $ASGN
+make clean
+make
+~kmammen-grader/bin/styleCheckC *.c
+$SCRIPTDIR/complexity $ASGN
+zip $ASGN.zip *.c *.h
+handin kmammen-grader $ASGN-Section7 $ASGN.zip

@@ -1,0 +1,19 @@
+README
+Author: Sam Malik
+
+Here is a list of all the included scripts, and a brief description of what they do.
+
+Usage:
+./<scriptname> <assignmentname> [command line args (only for run and inst)]
+
+complexitystats - calculates desired complexity stats of your code, also saves output of complexity tool to a file
+inst - attempts to find and run the instructor executable for the specified assignment-prompts if multiple executables are found (supports command line args)
+newtest - creates and runs a new test case (Note: it prompts for command line args to pass to your codde)
+PATHS - specifies path to your 357 directory - CHANGE THIS
+requirements - creates folder and copies Makefile if absent, and prints requirements, core tests, and feature tests to stdout
+run - recompiles and runs your code (supports command line args)
+submit - recompiles, stylechecks, runs complexity, zips, and hands in your code
+test - runs all test cases at once
+
+TEST CASES
+In order to work with this testing system, test cases MUST have any command line args on the first line of the test case file (usually in#, with # being a number). This is the format that ./newtest creates them in, and the format that ./test expects.

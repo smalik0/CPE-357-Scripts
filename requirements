@@ -1,0 +1,42 @@
+#!/bin/bash
+ASGN=$1
+source PATHS
+DIR="/home/kmammen-grader/evaluations/W17/357/$ASGN"
+if [ ! -d $DIR ]; then
+   echo "Invalid assignment: $ASGN"
+   exit 2
+fi
+if [ ! -r $DIR/requirements ]; then
+   echo "$ASGN is not available yet!"
+   exit 1;
+fi
+cd $DIR357
+if [ ! -d $ASGN ]; then
+   mkdir $ASGN
+   cp "$DIR/Makefile" "$ASGN"
+fi
+
+echo "REQUIREMENTS"
+cat "$DIR/requirements"
+if [ -d $DIR/tests/core ]; then
+   echo
+   echo "CORE"
+   cd $DIR/tests/core
+   for f in *; do
+      if [ -d ${f} ]; then
+         # Will not run if no directories are available
+         cat $f/description
+      fi
+   done
+fi
+if [ -d $DIR/tests/feature ]; then
+   echo
+   echo "FEATURE"
+   cd $DIR/tests/feature
+   for f in *; do
+      if [ -d ${f} ]; then
+         # Will not run if no directories are available
+         cat $f/description
+      fi
+   done
+fi
