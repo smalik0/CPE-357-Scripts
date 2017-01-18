@@ -27,6 +27,7 @@ set +e
 tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
 
 #Inst
+echo "Running instructor code..."
 DIR="/home/kmammen/357/$ASGN"
 if [ ! -d $DIR ]; then
    echo "$ASGN not found!"
@@ -55,7 +56,6 @@ if [[ $NUM > 1 ]]; then
    read INST
 fi
 cd $HOME/cpe357/$ASGN
-echo "Running instructor code..."
 tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
 echo "Diffing output..."
 diff $FILE.out $FILE.myout

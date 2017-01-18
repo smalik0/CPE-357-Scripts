@@ -42,6 +42,7 @@ while [ -e "$FILE" ]; do
    tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
    tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
    diff $FILE.out $FILE.myout
+   diff $FILE.err $FILE.myerr
    NUM=$((NUM+1))
    FILE="in$NUM"
 done
