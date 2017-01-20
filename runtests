@@ -15,7 +15,11 @@ if [ -n "$SSH_CLIENT" ] ; then
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
    cd "$CURDIR"
    . ./getasgn $1
-   cd "$ASGNDIR"
+   cd "$REMOTEASGNDIR"
+   cd $ASGN
+   make clean
+   make
+   #Inst
    DIR="/home/kmammen/357/$ASGN"
    if [ ! -d $DIR ]; then
       echo "$ASGN not found!"
@@ -43,16 +47,30 @@ if [ -n "$SSH_CLIENT" ] ; then
       echo "Which one? "
       read INST
    fi
+   NUM=1
+   cd $HOME/cpe357/$ASGN
 
-   echo "Instructor Output:"
+   FILE="in$NUM"
+   set +e
+   while [ -e "$FILE" ]; do
+      echo "Running $FILE"
+      tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
+      tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
+      diff $FILE.out $FILE.myout
+      diff $FILE.err $FILE.myerr
+      NUM=$((NUM+1))
+      FILE="in$NUM"
+   done
+
    echo
-   ./${FILES[$INST]}
-   echo
+
 else
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
    cd "$CURDIR"
    . ./getasgn $1
    cd "$ASGNDIR"
-   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEDIR/inst ${@:1}"
+   rsync -av $ASGN/* "$CPUSER@unix$UNIX.csc.calpoly.edu:/$REMOTEASGNDIR/$ASGN" > /dev/null
+   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "/$REMOTEDIR/runtests ${@:1}"
+   rsync -av $CPUSER@unix$UNIX.csc.calpoly.edu:/$REMOTEASGNDIR/$ASGN/in* $ASGN > /dev/null
 fi
 

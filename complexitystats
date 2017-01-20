@@ -1,40 +1,65 @@
 #!/bin/bash
-set -e
-ASGN=$1
-cd $DIR357
-if [ ! -d $ASGN ]; then
-   echo "Invalid assignment: $ASGN"
-   exit 2
+if [[ $# == 0 ]]; then
+   echo "Usage: "
+   echo "   $0 <ASGN_NAME>"
+   echo
+   echo "<ASGN_NAME> can be in any of the following formats:"
+   echo "      #           Ex. $0 1 (calls Exercise1)"
+   echo "      P#          Ex. $0 P1 (calls Project1)"
+   echo "      Exercise#   Ex. $0 Exercise1"
+   echo "      Project#    Ex. $0 Project1"
+   exit 1
 fi
-cd $ASGN
-complexity -t0 -s1 *.c > complexity$ASGN
-re='^[0-9]+$'
-NUM=0
-VALS=( )
-SUM=0
-MAX=0
-while read -r line; do
-   set -- $line
-   if [[ $1 =~ $re ]]; then
-      VALS[$NUM]=$1
-      CUR=$1
-      NUM=$((NUM+1))
-      SUM=$((SUM+CUR))
-      if [ $1 -gt $MAX ]; then
-         MAX=$1
-      fi
+if [ -n "$SSH_CLIENT" ] ; then 
+   set -e
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$REMOTEASGNDIR"
+   if [ ! -d $ASGN ]; then
+      echo "Invalid assignment: $ASGN"
+      exit 2
    fi
-done < complexity$ASGN
-((AVG=SUM/NUM))
-Q4=$((NUM/4))
-Q4SUM=0
-i=0
-for (( i = NUM-Q4; i < NUM; i++ )); do
-   CUR=${VALS[$i]}
-   Q4SUM=$((Q4SUM+CUR))
-done
-Q4R=$(echo "$Q4SUM / $SUM" | bc -l)
-echo "TOT: $SUM"
-echo "AVG: $AVG"
-echo "MAX: $MAX"
-echo "Q4R: $Q4R"
+   cd $ASGN
+   complexity -t0 -s1 *.c > complexity$ASGN
+   re='^[0-9]+$'
+   NUM=0
+   VALS=( )
+   SUM=0
+   MAX=0
+   while read -r line; do
+      set -- $line
+      if [[ $1 =~ $re ]]; then
+         VALS[$NUM]=$1
+         CUR=$1
+         NUM=$((NUM+1))
+         SUM=$((SUM+CUR))
+         if [ $1 -gt $MAX ]; then
+            MAX=$1
+         fi
+      fi
+   done < complexity$ASGN
+   ((AVG=SUM/NUM))
+   Q4=$((NUM/4))
+   Q4SUM=0
+   i=0
+   for (( i = NUM-Q4; i < NUM; i++ )); do
+      CUR=${VALS[$i]}
+      Q4SUM=$((Q4SUM+CUR))
+   done
+   Q4R=$(echo "$Q4SUM / $SUM" | bc -l)
+   echo "TOT: $SUM"
+   echo "AVG: $AVG"
+   echo "MAX: $MAX"
+   echo "Q4R: $Q4R"
+
+else
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$ASGNDIR"
+   rsync -av $ASGN/* "$CPUSER@unix$UNIX.csc.calpoly.edu:/$REMOTEASGNDIR/$ASGN" > /dev/null
+   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEDIR/calccomplexity $1"
+fi
+
+

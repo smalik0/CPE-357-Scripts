@@ -1,64 +1,83 @@
 #!/bin/bash
-set -e
-ASGN=$1
-source PATHS
-cd $DIR357
-cd $ASGN
-make clean
-make
-NUM=1
-FILE="in$NUM"
-while [ -e "$FILE" ]; do
-   NUM=$((NUM+1))
+if [[ $# == 0 ]]; then
+   echo "Usage: "
+   echo "   $0 <ASGN_NAME>"
+   echo
+   echo "<ASGN_NAME> can be in any of the following formats:"
+   echo "      #           Ex. $0 1 (calls Exercise1)"
+   echo "      P#          Ex. $0 P1 (calls Project1)"
+   echo "      Exercise#   Ex. $0 Exercise1"
+   echo "      Project#    Ex. $0 Project1"
+   exit 1
+fi
+if [ -n "$SSH_CLIENT" ] ; then 
+   set -e
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$REMOTEASGNDIR"
+   cd $ASGN
+   make clean
+   make
+   NUM=1
    FILE="in$NUM"
-done
-
-echo "Command line args?"
-read ARGS
-
-echo "Writing to $FILE! Type quit to finish"
-echo $ARGS > $FILE
-
-while read line && [ "$line" != "quit" ]; do
-   echo $line >> $FILE
-done
-echo "Running your code..."
-set +e
-tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
-
-#Inst
-echo "Running instructor code..."
-DIR="/home/kmammen/357/$ASGN"
-if [ ! -d $DIR ]; then
-   echo "$ASGN not found!"
-   exit
-fi
-cd $DIR
-NUM=0
-FILES=( )
-for f in *; do
-   if [ -f "$f" ] && [ -x "$f" ]; then
-      FILES[$NUM]=$f
+   while [ -e "$FILE" ]; do
       NUM=$((NUM+1))
-   fi
-done
-INST=0
-if [[ $NUM == 0 ]]; then
-   echo "No executable found!"
-   exit
-fi
-if [[ $NUM > 1 ]]; then
-   echo "Multiple executables found!"
-   for (( i = 0; i < $NUM; i++ )); do
-      echo "$i: ${FILES[$i]}"
+      FILE="in$NUM"
    done
-   echo "Which one? "
-   read INST
+
+   echo "Command line args?"
+   read ARGS
+   
+   echo "Writing to $FILE! Type quit to finish"
+   echo $ARGS > $FILE
+
+   while read line && [ "$line" != "quit" ]; do
+      echo $line >> $FILE
+   done
+   set +e
+   tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
+
+   #Inst
+   DIR="/home/kmammen/357/$ASGN"
+   if [ ! -d $DIR ]; then
+      echo "$ASGN not found!"
+      exit
+   fi
+   cd $DIR
+   NUM=0
+   FILES=( )
+   for f in *; do
+      if [ -f "$f" ] && [ -x "$f" ]; then
+         FILES[$NUM]=$f
+         NUM=$((NUM+1))
+      fi
+   done
+   INST=0
+   if [[ $NUM == 0 ]]; then
+      echo "No executable found!"
+      exit
+   fi
+   if [[ $NUM > 1 ]]; then
+      echo "Multiple executables found!"
+      for (( i = 0; i < $NUM; i++ )); do
+         echo "$i: ${FILES[$i]}"
+      done
+      echo "Which one? "
+      read INST
+   fi
+   cd $HOME/cpe357/$ASGN
+   tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
+   echo
+   diff $FILE.out $FILE.myout
+   diff $FILE.err $FILE.myerr
+else
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$ASGNDIR"
+   rsync -av $ASGN/* "$CPUSER@unix$UNIX.csc.calpoly.edu:$REMOTEASGNDIR/$ASGN" > /dev/null
+   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEDIR/newtest ${@:1}"
+   rsync -av $CPUSER@unix$UNIX.csc.calpoly.edu:$REMOTEASGNDIR/$ASGN/in* $ASGN > /dev/null
 fi
-cd $HOME/cpe357/$ASGN
-tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
-echo "Diffing output..."
-diff $FILE.out $FILE.myout
-diff $FILE.err $FILE.myerr
-echo "Done!"
 

@@ -1,42 +1,67 @@
 #!/bin/bash
-ASGN=$1
-source PATHS
-DIR="/home/kmammen-grader/evaluations/W17/357/$ASGN"
-if [ ! -d $DIR ]; then
-   echo "Invalid assignment: $ASGN"
-   exit 2
+if [[ $# == 0 ]]; then
+   echo "Usage: "
+   echo "   $0 <ASGN_NAME>"
+   echo
+   echo "<ASGN_NAME> can be in any of the following formats:"
+   echo "      #           Ex. $0 1 (calls Exercise1)"
+   echo "      P#          Ex. $0 P1 (calls Project1)"
+   echo "      Exercise#   Ex. $0 Exercise1"
+   echo "      Project#    Ex. $0 Project1"
+   exit 1
 fi
-if [ ! -r $DIR/requirements ]; then
-   echo "$ASGN is not available yet!"
-   exit 1;
-fi
-cd $DIR357
-if [ ! -d $ASGN ]; then
-   mkdir $ASGN
-   cp "$DIR/Makefile" "$ASGN"
-fi
+if [ -n "$SSH_CLIENT" ] ; then 
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$REMOTEASGNDIR"
+   DIR="/home/kmammen-grader/evaluations/W17/357/$ASGN"
+   if [ ! -d $DIR ]; then
+      echo "Invalid assignment: $ASGN"
+      exit 2
+   fi
+   if [ ! -r $DIR/requirements ]; then
+      echo "$ASGN is not available yet!"
+      exit 1;
+   fi
+   cd $HOME/cpe357
+   if [ ! -d $ASGN ]; then
+      mkdir $ASGN
+      cp "$DIR/Makefile" "$ASGN"
+   fi
 
-echo "REQUIREMENTS"
-cat "$DIR/requirements"
-if [ -d $DIR/tests/core ]; then
-   echo
-   echo "CORE"
-   cd $DIR/tests/core
-   for f in *; do
-      if [ -d ${f} ]; then
-         # Will not run if no directories are available
-         cat $f/description
-      fi
-   done
-fi
-if [ -d $DIR/tests/feature ]; then
-   echo
-   echo "FEATURE"
-   cd $DIR/tests/feature
-   for f in *; do
-      if [ -d ${f} ]; then
-         # Will not run if no directories are available
-         cat $f/description
-      fi
-   done
+   echo "REQUIREMENTS"
+   cat "$DIR/requirements"
+   if [ -d $DIR/tests/core ]; then
+      echo
+      echo "CORE"
+      cd $DIR/tests/core
+      for f in *; do
+         if [ -d ${f} ]; then
+            # Will not run if no directories are available
+            cat $f/description
+         fi
+      done
+   fi
+   if [ -d $DIR/tests/feature ]; then
+      echo
+      echo "FEATURE"
+      cd $DIR/tests/feature
+      for f in *; do
+         if [ -d ${f} ]; then
+            # Will not run if no directories are available
+            cat $f/description
+         fi
+      done
+   fi
+else
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$ASGNDIR"
+   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEASGNDIR/requirements $1"
+   if (ssh $CPUSER@unix$UNIX.csc.calpoly.edu "[ -d $REMOTEASGNDIR/$ASGN ]"); then
+      mkdir $ASGN
+      rsync -av $CPUSER@unix$UNIX.csc.calpoly.edu:$REMOTEASGNDIR/$ASGN/* $ASGN > /dev/null
+   fi
 fi

@@ -1,16 +1,38 @@
 #!/bin/bash
-ASGN=$1
-source PATHS
-DIR="/home/kmammen-grader/evaluations/W17/357/$ASGN"
-cd $DIR357
-if [ ! -d $ASGN ]; then
-   echo "Invalid assignment: $ASGN"
-   exit 2
+if [[ $# == 0 ]]; then
+   echo "Usage: "
+   echo "   $0 <ASGN_NAME>"
+   echo
+   echo "<ASGN_NAME> can be in any of the following formats:"
+   echo "      #           Ex. $0 1 (calls Exercise1)"
+   echo "      P#          Ex. $0 P1 (calls Project1)"
+   echo "      Exercise#   Ex. $0 Exercise1"
+   echo "      Project#    Ex. $0 Project1"
+   exit 1
 fi
-cd $ASGN
-make clean
-make
-~kmammen-grader/bin/styleCheckC *.c
-$SCRIPTDIR/complexity $ASGN
-zip $ASGN.zip *.c *.h
-handin kmammen-grader $ASGN-Section7 $ASGN.zip
+if [ -n "$SSH_CLIENT" ] ; then 
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$REMOTEASGNDIR"
+   DIR="/home/kmammen-grader/evaluations/W17/357/$ASGN"
+   if [ ! -d $ASGN ]; then
+      echo "Invalid assignment: $ASGN"
+      exit 2
+   fi
+   cd $ASGN
+   make clean
+   make
+   ~kmammen-grader/bin/styleCheckC *.c
+   ../complexity $ASGN
+   zip $ASGN.zip *.c *.h
+   handin kmammen-grader $ASGN-Section7 $ASGN.zip
+else
+   CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   cd "$CURDIR"
+   . ./getasgn $1
+   cd "$ASGNDIR"
+   rsync -av $ASGN/* "$CPUSER@unix$UNIX.csc.calpoly.edu:$REMOTEASGNDIR/$ASGN" > /dev/null
+   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEDIR/submit $1"
+fi
+

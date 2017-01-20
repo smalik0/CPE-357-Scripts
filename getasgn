@@ -1,0 +1,21 @@
+#!/bin/bash
+EX='^[0-9]+$'
+PROJ='^P[0-9]+$'
+source PATHS
+if [[ $1 =~ $EX ]]; then
+   ASGN="Exercise$1"
+   ASGNDIR=$EXERCISEDIR
+   REMOTEASGNDIR=$REMOTEEXERCISEDIR
+elif [[ $1 =~ $PROJ ]]; then
+   ASGN="Project${1:1:${#1}-1}"
+   ASGNDIR=$PROJECTDIR
+   REMOTEASGNDIR=$REMOTEPROJECTDIR
+elif [[ $1 =~ '^Exercise[0-9]+$' ]]; then
+   ASGN=$1
+   ASGNDIR=$EXERCISEDIR
+   REMOTEASGNDIR=$REMOTEEXERCISEDIR
+else
+   ASGN=$1
+   ASGNDIR=$PROJDIR
+   REMOTEASGNDIR=$REMOTEPROJECTDIR
+fi
