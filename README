@@ -20,3 +20,7 @@ In order to work with this testing system, test cases MUST have any command line
 
 KNOWN ISSUES:
 ./submit does not handin for Project1 due to a difference in Mammen's naming convention; if this persists I'll write a fix
+
+INSTALLATION:
+
+git clone http://github.com/smalik0/CPE-357-Scripts <install_dir>
