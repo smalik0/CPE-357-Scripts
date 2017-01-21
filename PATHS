@@ -1,15 +1,15 @@
 #!/bin/bash
 
+# Set these variables if you want to edit on your local environment
 LOCALDIR="$HOME/Documents/Cal Poly/CPE 357"
+PROJECTDIR="$LOCALDIR"
+EXERCISEDIR="$LOCALDIR"
+
+# CSL Server variables (MUST BE SET)
 CPUSER="smalik01"
 UNIX=12
+
+# You MUST set these variables for ANY of my scripts to work!!
 REMOTEDIR="/home/$CPUSER/cpe357"
-if [[ -n $SSH_CLIENT ]]; then
-   DIR357="$REMOTEDIR"
-else
-   DIR357="$LOCALDIR"
-fi
 REMOTEPROJECTDIR=$REMOTEDIR
 REMOTEEXERCISEDIR=$REMOTEDIR
-PROJECTDIR=$DIR357
-EXERCISEDIR=$DIR357

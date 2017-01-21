@@ -24,3 +24,9 @@ KNOWN ISSUES:
 INSTALLATION:
 
 git clone http://github.com/smalik0/CPE-357-Scripts <install_dir>
+
+Notes:
+Put the scripts on the CSL Servers!!
+Even if you want to work from your local environment, there must be an IDENTICAL copy of these scripts on the CSL servers in the path specified by $REMOTEDIR
+For local editing, you will need the scripts BOTH on your machine and on the servers (the local scripts copy your files to the servers then do all the work on the servers before returning the output to your local machine)
+ssh keys is extremely helpful for the local environment, as each script connects to the server several times (see Piazza for ssh key setup instructions)
