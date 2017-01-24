@@ -61,7 +61,7 @@ else
    cd "$ASGNDIR"
    ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEASGNDIR/requirements $1"
    if (ssh $CPUSER@unix$UNIX.csc.calpoly.edu "[ -d $REMOTEASGNDIR/$ASGN ]"); then
-      mkdir $ASGN
+      mkdir -p $ASGN
       rsync -av $CPUSER@unix$UNIX.csc.calpoly.edu:$REMOTEASGNDIR/$ASGN/* $ASGN > /dev/null
    fi
 fi

@@ -13,9 +13,9 @@ fi
 if [ -n "$SSH_CLIENT" ] ; then 
    set -e
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-   cd "$REMOTECURDIR"
+   cd "$CURDIR"
    . ./getasgn $1
-   cd "$ASGNDIR"
+   cd "$REMOTEASGNDIR"
    if [ ! -d $ASGN ]; then
       echo "Invalid assignment: $ASGN"
       exit 2

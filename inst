@@ -44,9 +44,10 @@ if [ -n "$SSH_CLIENT" ] ; then
       read INST
    fi
 
+   cd "$ASGNDIR/$ASGN"
    echo "Instructor Output:"
    echo
-   ./${FILES[$INST]}
+   $DIR/${FILES[$INST]} ${@:2}
    echo
 else
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

@@ -26,7 +26,7 @@ if [ -n "$SSH_CLIENT" ] ; then
    ~kmammen-grader/bin/styleCheckC *.c
    ../complexity $ASGN
    zip $ASGN.zip *.c *.h
-   handin kmammen-grader $ASGN-Section7 $ASGN.zip
+   handin kmammen-grader $HANDINDIR $ASGN.zip
 else
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
    cd "$CURDIR"

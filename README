@@ -19,7 +19,8 @@ TEST CASES
 In order to work with this testing system, test cases MUST have any command line args on the first line of the test case file (usually in#, with # being a number). This is the format that ./newtest creates them in, and the format that ./test expects.
 
 KNOWN ISSUES:
-./submit does not handin for Project1 due to a difference in Mammen's naming convention; if this persists I'll write a fix
+~~./submit does not handin for Project1 due to a difference in Mammen's naming convention; if this persists I'll write a fix~~ FIXED
+   
 
 INSTALLATION:
 
