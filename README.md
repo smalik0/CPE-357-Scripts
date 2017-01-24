@@ -7,12 +7,17 @@ Usage:
 ./<scriptname> <assignmentname> [command line args (only for run and inst)]
 
 complexitystats - calculates desired complexity stats of your code, also saves output of complexity tool to a file
+
 inst - attempts to find and run the instructor executable for the specified assignment-prompts if multiple executables are found (supports command line args)
+
 newtest - creates and runs a new test case (Note: it prompts for command line args to pass to your codde)
 PATHS - specifies path to your 357 directory - CHANGE THIS
+
 requirements - creates folder and copies Makefile if absent, and prints requirements, core tests, and feature tests to stdout
 run - recompiles and runs your code (supports command line args)
+
 submit - recompiles, stylechecks, runs complexity, zips, and hands in your code
+
 test - runs all test cases at once
 
 TEST CASES
