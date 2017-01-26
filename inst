@@ -1,13 +1,15 @@
 #!/bin/bash
 if [[ $# == 0 ]]; then
    echo "Usage: "
-   echo "   $0 <ASGN_NAME>"
+   echo "   $0 <ASGN_NAME> [command line args]"
    echo
    echo "<ASGN_NAME> can be in any of the following formats:"
    echo "      #           Ex. $0 1 (calls Exercise1)"
    echo "      P#          Ex. $0 P1 (calls Project1)"
    echo "      Exercise#   Ex. $0 Exercise1"
    echo "      Project#    Ex. $0 Project1"
+   echo
+   echo "Command line args, if specified, will be passed to the instructor executable"
    exit 1
 fi
 if [ -n "$SSH_CLIENT" ] ; then 

@@ -4,7 +4,8 @@ Author: Sam Malik
 Here is a list of all the included scripts, and a brief description of what they do.
 
 Usage:
-./<scriptname> <assignmentname> [command line args (only for run and inst)]
+./<scriptname> <assignmentname> [options]
+Run with no arguments to see script specific usage instructions
 
 complexitystats - calculates desired complexity stats of your code, also saves output of complexity tool to a file
 
@@ -19,6 +20,8 @@ run - recompiles and runs your code (supports command line args)
 submit - recompiles, stylechecks, runs complexity, zips, and hands in your code
 
 test - runs all test cases at once
+
+vd - checks all output files from tests and opens all pairs with diffs using vimdiff, each pair in its own tab (can take an optional extra parameter - test case number. if specified, vd will only open that test case's output and error file pairs in vimdiff mode)
 
 TEST CASES
 In order to work with this testing system, test cases MUST have any command line args on the first line of the test case file (usually in#, with # being a number). This is the format that ./newtest creates them in, and the format that ./test expects.
