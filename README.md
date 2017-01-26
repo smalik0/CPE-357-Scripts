@@ -46,9 +46,9 @@ KNOWN ISSUES:
 
 INSTALLATION:
 
-git clone http://github.com/smalik0/CPE-357-Scripts INSTALL_DIR && chmod +x INSTALL_DIR/*.sh
+mkdir -p INSTALL_DIR && git clone http://github.com/smalik0/CPE-357-Scripts INSTALL_DIR && chmod +x INSTALL_DIR/* && chmod -x INSTALL_DIR/PATHS && chmod -x INSTALL_DIR/README.md
 
-
+Then look at PATHS and point all the variables to the appropriate paths on your filesystem!!
 
 Notes:
 
