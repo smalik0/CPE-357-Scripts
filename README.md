@@ -8,7 +8,7 @@ Here is a list of all the included scripts, and a brief description of what they
 
 Usage:
 
-./<scriptname> <assignmentname> [options]
+./scriptname assignmentname [options]
 
 Run with no arguments to see script specific usage instructions
 
