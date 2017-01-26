@@ -46,7 +46,7 @@ KNOWN ISSUES:
 
 INSTALLATION:
 
-git clone http://github.com/smalik0/CPE-357-Scripts <install_dir>
+git clone http://github.com/smalik0/CPE-357-Scripts INSTALL_DIR && chmod +x INSTALL_DIR/*.sh
 
 
 
