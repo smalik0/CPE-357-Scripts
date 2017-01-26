@@ -1,0 +1,69 @@
+#!/bin/bash
+if [[ $# == 0 ]]; then
+   echo "Usage: "
+   echo "   $0 <ASGN_NAME> [infile#]"
+   echo
+   echo "<ASGN_NAME> can be in any of the following formats:"
+   echo "      #           Ex. $0 1 (calls Exercise1)"
+   echo "      P#          Ex. $0 P1 (calls Project1)"
+   echo "      Exercise#   Ex. $0 Exercise1"
+   echo "      Project#    Ex. $0 Project1"
+   echo
+   echo "[infile#] specifies the number of a specific input file to view"
+   echo "      if not specified, the default is all output files for which diffs exist"
+   exit 1
+fi
+
+CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$CURDIR"
+. ./getasgn $1
+cd "$ASGNDIR"
+if [ ! -d $ASGN ]; then
+   echo "Invalid assignment: $ASGN"
+   exit 2
+fi
+cd $ASGN
+
+if [[ $# > 1 ]]; then
+   if [ ! -f "in$2" ]; then
+      echo "Test case in$2 does not exist!"
+      exit 1
+   fi
+fi
+
+if [[ $# > 1 ]]; then
+   FILE="in$2"
+   vim-c "set diffopt=filler,vertical" -c "edit ${FILE}.myout" -c "diffsplit ${FILE}.out" -c "tabe ${FILE}.myerr" -c "diffsplit ${FILE}.err" -c "tabn 1"
+   exit
+fi
+NUM=1
+FILE="in$NUM"
+DIFFS=0
+ARGS=""
+while [[ -e "$FILE" ]]; do
+   if ! diff -q $FILE.out $FILE.myout >/dev/null; then
+      2>/dev/null
+      if [[ $ARGS == "" ]]; then
+         ARGS="-c 'set diffopt=filler,vertical' -c 'edit ${FILE}.myout' -c 'diffsplit ${FILE}.out'"
+      else
+         ARGS="$ARGS -c 'tabe $FILE.myout' -c 'diffsplit $FILE.out'"
+      fi
+   fi
+   if ! diff -q $FILE.err $FILE.myerr &>/dev/null; then
+      2>/dev/null
+      if [[ $ARGS == "" ]]; then
+         ARGS="-c 'set diffopt=filler,vertical' -c 'edit ${FILE}.myerr' -c 'diffsplit ${FILE}.err'"
+      else
+         ARGS="$ARGS -c 'tabe $FILE.myerr' -c 'diffsplit $FILE.err'"
+      fi
+   fi
+   NUM=$((NUM+1))
+   FILE="in$NUM"
+done
+if [[ $ARGS == "" ]]; then
+   echo "No diffs!"
+   exit 0
+fi
+eval "vim $ARGS -c 'tabn 1'"
+
+
