@@ -1,0 +1,31 @@
+#!/bin/bash
+if [[ $INSTBIN == '' ]]; then
+   if [ ! -d $INSTDIR ]; then
+      echo "$ASGN not found!"
+      exit
+   fi
+   cd $INSTDIR
+   NUM=0
+   FILES=( )
+   for f in *; do
+      if [ -f "$f" ] && [ -x "$f" ]; then
+         FILES[$NUM]=$f
+         NUM=$((NUM+1))
+      fi
+   done
+   INST=0
+   if [[ $NUM == 0 ]]; then
+      echo "No executable found!"
+      exit
+   fi
+   if [[ $NUM > 1 ]]; then
+      echo "Multiple executables found!"
+      for (( i = 0; i < $NUM; i++ )); do
+         echo "$i: ${FILES[$i]}"
+      done
+      echo "Which one? "
+      read INST
+   fi
+
+   INSTBIN="$INSTDIR/${FILES[$INST]}"
+fi

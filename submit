@@ -24,7 +24,7 @@ if [ -n "$SSH_CLIENT" ] ; then
    make clean
    make
    ~kmammen-grader/bin/styleCheckC *.c
-   ../complexity $ASGN
+   ../calccomplexity $ASGN
    zip $ASGN.zip *.c *.h
    handin kmammen-grader $HANDINDIR $ASGN.zip
 else

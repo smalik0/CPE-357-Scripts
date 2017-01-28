@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $# == 0 ]]; then
    echo "Usage: "
-   echo "   $0 <ASGN_NAME> [command line args]"
+   echo "   $0 <ASGN_NAME> [arguments]"
    echo
    echo "<ASGN_NAME> can be in any of the following formats:"
    echo "      #           Ex. $0 1 (calls Exercise1)"
@@ -9,7 +9,7 @@ if [[ $# == 0 ]]; then
    echo "      Exercise#   Ex. $0 Exercise1"
    echo "      Project#    Ex. $0 Project1"
    echo
-   echo "Command line args, if specified, will be passed to your executable"
+   echo "Any additional arguments specified will be passed to the executable verbatim"
    exit 1
 fi
 if [ -n "$SSH_CLIENT" ] ; then 

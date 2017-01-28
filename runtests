@@ -19,45 +19,22 @@ if [ -n "$SSH_CLIENT" ] ; then
    cd $ASGN
    make clean
    make
-   #Inst
-   DIR="/home/kmammen/357/$ASGN"
-   if [ ! -d $DIR ]; then
-      echo "$ASGN not found!"
-      exit
-   fi
-   cd $DIR
-   NUM=0
-   FILES=( )
-   for f in *; do
-      if [ -f "$f" ] && [ -x "$f" ]; then
-         FILES[$NUM]=$f
-         NUM=$((NUM+1))
-      fi
-   done
-   INST=0
-   if [[ $NUM == 0 ]]; then
-      echo "No executable found!"
-      exit
-   fi
-   if [[ $NUM > 1 ]]; then
-      echo "Multiple executables found!"
-      for (( i = 0; i < $NUM; i++ )); do
-         echo "$i: ${FILES[$i]}"
-      done
-      echo "Which one? "
-      read INST
-   fi
+   . $CURDIR/getinst $ASGN
    NUM=1
    cd $HOME/cpe357/$ASGN
-
    FILE="in$NUM"
    set +e
    while [ -e "$FILE" ]; do
       echo "Running $FILE"
       tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
-      tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
+      MYEXIT=$?
+      tail -n +2 $FILE | $INSTBIN `head -1 $FILE` > $FILE.out 2> $FILE.err
+      INSTEXIT=$?
       diff $FILE.out $FILE.myout
       diff $FILE.err $FILE.myerr
+      if [[ $INSTEXIT != $MYEXIT ]]; then
+         echo "Expected $INSTEXIT return val, found $MYEXIT"
+      fi
       NUM=$((NUM+1))
       FILE="in$NUM"
    done
@@ -72,5 +49,7 @@ else
    rsync -av $ASGN/* "$CPUSER@unix$UNIX.csc.calpoly.edu:/$REMOTEASGNDIR/$ASGN" > /dev/null
    ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "/$REMOTEDIR/runtests ${@:1}"
    rsync -av $CPUSER@unix$UNIX.csc.calpoly.edu:/$REMOTEASGNDIR/$ASGN/in* $ASGN > /dev/null
+   "$CURDIR/vd" $1
 fi
+
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $# == 0 ]]; then
    echo "Usage: "
-   echo "   $0 <ASGN_NAME> [command line args]"
+   echo "   $0 <ASGN_NAME> [arguments]"
    echo
    echo "<ASGN_NAME> can be in any of the following formats:"
    echo "      #           Ex. $0 1 (calls Exercise1)"
@@ -9,7 +9,7 @@ if [[ $# == 0 ]]; then
    echo "      Exercise#   Ex. $0 Exercise1"
    echo "      Project#    Ex. $0 Project1"
    echo
-   echo "Command line args, if specified, will be passed to the instructor executable"
+   echo "Any additional arguments specified will be passed to the executable verbatim"
    exit 1
 fi
 if [ -n "$SSH_CLIENT" ] ; then 
@@ -18,38 +18,11 @@ if [ -n "$SSH_CLIENT" ] ; then
    cd "$CURDIR"
    . ./getasgn $1
    cd "$ASGNDIR"
-   DIR="/home/kmammen/357/$ASGN"
-   if [ ! -d $DIR ]; then
-      echo "$ASGN not found!"
-      exit
-   fi
-   cd $DIR
-   NUM=0
-   FILES=( )
-   for f in *; do
-      if [ -f "$f" ] && [ -x "$f" ]; then
-         FILES[$NUM]=$f
-         NUM=$((NUM+1))
-      fi
-   done
-   INST=0
-   if [[ $NUM == 0 ]]; then
-      echo "No executable found!"
-      exit
-   fi
-   if [[ $NUM > 1 ]]; then
-      echo "Multiple executables found!"
-      for (( i = 0; i < $NUM; i++ )); do
-         echo "$i: ${FILES[$i]}"
-      done
-      echo "Which one? "
-      read INST
-   fi
-
+   . $CURDIR/getinst $ASGN
    cd "$ASGNDIR/$ASGN"
    echo "Instructor Output:"
    echo
-   $DIR/${FILES[$INST]} ${@:2}
+   $INSTBIN ${@:2}
    echo
 else
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

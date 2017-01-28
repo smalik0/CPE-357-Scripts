@@ -36,41 +36,19 @@ if [ -n "$SSH_CLIENT" ] ; then
       echo $line >> $FILE
    done
    set +e
+   cd $ASGNDIR/$ASGN
    tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
-
-   #Inst
-   DIR="/home/kmammen/357/$ASGN"
-   if [ ! -d $DIR ]; then
-      echo "$ASGN not found!"
-      exit
-   fi
-   cd $DIR
-   NUM=0
-   FILES=( )
-   for f in *; do
-      if [ -f "$f" ] && [ -x "$f" ]; then
-         FILES[$NUM]=$f
-         NUM=$((NUM+1))
-      fi
-   done
-   INST=0
-   if [[ $NUM == 0 ]]; then
-      echo "No executable found!"
-      exit
-   fi
-   if [[ $NUM > 1 ]]; then
-      echo "Multiple executables found!"
-      for (( i = 0; i < $NUM; i++ )); do
-         echo "$i: ${FILES[$i]}"
-      done
-      echo "Which one? "
-      read INST
-   fi
-   cd $HOME/cpe357/$ASGN
-   tail -n +2 $FILE | $DIR/${FILES[$INST]} `head -1 $FILE` > $FILE.out 2> $FILE.err
+   MYEXIT=$?
+   . $CURDIR/getinst $ASGN
+   cd $ASGNDIR/$ASGN
+   tail -n +2 $FILE | $INSTBIN `head -1 $FILE` > $FILE.out 2> $FILE.err
+   INSTEXIT=$?
    echo
    diff $FILE.out $FILE.myout
    diff $FILE.err $FILE.myerr
+   if [[ $MYEXIT != $INSTEXIT ]]; then
+      echo "Expected $INSTEXIT return val, found $MYEXIT"
+   fi
 else
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
    cd "$CURDIR"

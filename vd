@@ -31,9 +31,12 @@ if [[ $# > 1 ]]; then
    fi
 fi
 
+if [[ ! $EDITOR ]]; then
+   EDITOR="vim"
+fi
 if [[ $# > 1 ]]; then
    FILE="in$2"
-   vim-c "set diffopt=filler,vertical" -c "edit ${FILE}.myout" -c "diffsplit ${FILE}.out" -c "tabe ${FILE}.myerr" -c "diffsplit ${FILE}.err" -c "tabn 1"
+   $EDITOR -c "set diffopt=filler,vertical" -c "edit ${FILE}.myout" -c "diffsplit ${FILE}.out" -c "tabe ${FILE}.myerr" -c "diffsplit ${FILE}.err" -c "tabn 1"
    exit
 fi
 NUM=1
@@ -64,6 +67,6 @@ if [[ $ARGS == "" ]]; then
    echo "No diffs!"
    exit 0
 fi
-eval "vim $ARGS -c 'tabn 1'"
+eval "$EDITOR $ARGS -c 'tabn 1'"
 
 
