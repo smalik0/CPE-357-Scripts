@@ -11,32 +11,27 @@ if [[ $# == 0 ]]; then
    exit 1
 fi
 if [ -n "$SSH_CLIENT" ] ; then 
+   set -e
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
    cd "$CURDIR"
    . ./getasgn $1
    cd "$REMOTEASGNDIR"
-   DIR="/home/kmammen-grader/evaluations/W17/357/$ASGN"
    if [ ! -d $ASGN ]; then
       echo "Invalid assignment: $ASGN"
       exit 2
    fi
    cd $ASGN
    make clean
-   make
-   ~kmammen-grader/bin/styleCheckC *.c
-   ../calccomplexity $ASGN
-   zip $ASGN.zip *.c *.h
-   handin kmammen-grader $ASGN $ASGN.zip 2>/dev/null 
-   EXIT=$?
-   if [[ $EXIT != 0 ]]; then
-      handin kmammen-grader $ASGN-Section7 $ASGN.zip 
-   fi
+   gcc -g *.c
+   gdb ./a.out
+   echo
 else
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
    cd "$CURDIR"
    . ./getasgn $1
    cd "$ASGNDIR"
    rsync -av $ASGN/* "$CPUSER@unix$UNIX.csc.calpoly.edu:$REMOTEASGNDIR/$ASGN" > /dev/null
-   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEDIR/submit $1"
+   ssh $CPUSER@unix$UNIX.csc.calpoly.edu -t "$REMOTEDIR/debug ${@:1}"
 fi
+
 
