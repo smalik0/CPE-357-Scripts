@@ -17,9 +17,9 @@ if [ -n "$SSH_CLIENT" ] ; then
    CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
    cd "$CURDIR"
    . ./getasgn $1
-   cd "$ASGNDIR"
+   cd "$REMOTEASGNDIR"
    . $CURDIR/getinst $ASGN
-   cd "$ASGNDIR/$ASGN"
+   cd "$REMOTEASGNDIR/$ASGN"
    echo "Instructor Output:"
    echo
    $INSTBIN ${@:2}

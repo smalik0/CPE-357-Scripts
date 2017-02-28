@@ -29,21 +29,21 @@ if [ -n "$SSH_CLIENT" ] ; then
    echo "Command line args?"
    read ARGS
    
-   echo "Writing to $FILE! Type quit to finish"
+   echo "Writing to $FILE! EOF to finish"
    echo "$ARGS" > $FILE
 
-   while read line && [ "$line" != "quit" ]; do
+   while read line ; do
       echo $line >> $FILE
    done
    set +e
-   cd $ASGNDIR/$ASGN
+   cd $REMOTEASGNDIR/$ASGN
    touch $FILE.myout $FILE.out $FILE.err $FILE.myerr
    chmod -r $FILE.myout $FILE.out $FILE.err $FILE.myerr
  
    tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
    MYEXIT=$?
    . $CURDIR/getinst $ASGN
-   cd $ASGNDIR/$ASGN
+   cd $REMOTEASGNDIR/$ASGN
    tail -n +2 $FILE | $INSTBIN `head -1 $FILE` > $FILE.out 2> $FILE.err
    INSTEXIT=$?
    chmod +r $FILE.myout $FILE.out $FILE.err $FILE.myerr

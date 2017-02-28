@@ -1,6 +1,6 @@
 #!/bin/bash
 EX='^[0-9]+$'
-PROJ='^P[0-9]+$'
+PROJ='^P[0-9]+'
 EXAM='^E[1-3]P[0-9]+$'
 source PATHS
 INSTBIN=''

@@ -27,9 +27,9 @@ if [ -n "$SSH_CLIENT" ] ; then
    while [ -e "$FILE" ]; do
       echo "Running $FILE"
       chmod -r $FILE.out $FILE.myout $FILE.err $FILE.myerr
-      tail -n +2 $FILE | ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
+      tail -n +2 $FILE | $SAFERUN ./a.out `head -1 $FILE` > $FILE.myout 2> $FILE.myerr
       MYEXIT=$?
-      tail -n +2 $FILE | $INSTBIN `head -1 $FILE` > $FILE.out 2> $FILE.err
+      tail -n +2 $FILE | $SAFERUN $INSTBIN `head -1 $FILE` > $FILE.out 2> $FILE.err
       INSTEXIT=$?
       chmod +r $FILE.out $FILE.myout $FILE.err $FILE.myerr
       diff $FILE.out $FILE.myout

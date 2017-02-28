@@ -38,6 +38,7 @@ if [ -n "$SSH_CLIENT" ] ; then
       cd $DIR/tests/core
       for f in *; do
          if [ -d ${f} ]; then
+            echo $f
             # Will not run if no directories are available
             cat $f/description
          fi
@@ -49,6 +50,7 @@ if [ -n "$SSH_CLIENT" ] ; then
       cd $DIR/tests/feature
       for f in *; do
          if [ -d ${f} ]; then
+            echo $f
             # Will not run if no directories are available
             cat $f/description
          fi
